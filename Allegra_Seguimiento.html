@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Allegra Weddings · Seguimiento</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark:#1C1917;--dark2:#292522;--dark3:#332F2C;
+  --gold:#C6A96C;--gold2:#D4B896;--rose:#8B3A3A;--rose2:#A04444;
+  --cream:#F5F0E8;--cream2:#EDE7DA;--text:#2A2825;--muted:#9A8F85;
+  --green:#4A7C59;--yellow:#C49A1A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Jost',sans-serif;background:var(--dark);color:var(--cream);min-height:100vh;}
+
+header{background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%);border-bottom:1px solid rgba(198,169,108,0.3);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.logo p{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+.hdate{font-size:11px;color:var(--muted);letter-spacing:1px;}
+
+.alerta-bar{background:linear-gradient(90deg,rgba(139,58,58,.12),rgba(198,169,108,.06));border-bottom:1px solid rgba(198,169,108,.12);padding:10px 32px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;min-height:42px;}
+.al-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;white-space:nowrap;}
+.al-chip{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid;transition:.2s;}
+.al-chip:hover{transform:translateY(-1px);}
+.al-chip.urgente{background:rgba(139,58,58,.25);border-color:var(--rose);color:#E88;}
+.al-chip.hoy{background:rgba(196,154,26,.18);border-color:var(--yellow);color:#DDA;}
+
+main{padding:28px 32px;max-width:1400px;margin:0 auto;}
+
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:28px;}
+.sc{background:var(--dark2);border:1px solid rgba(198,169,108,.15);border-radius:8px;padding:14px 10px;text-align:center;cursor:pointer;transition:.2s;}
+.sc:hover,.sc.act{border-color:var(--gold);background:var(--dark3);}
+.sc .n{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;line-height:1;margin-bottom:3px;}
+.sc .l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.sc.s-all .n{color:var(--gold);}
+.sc.s-cal .n{color:#6EC97A;}
+.sc.s-tib .n{color:#DDAA44;}
+.sc.s-fri .n{color:#7AADE8;}
+.sc.s-con .n{color:var(--gold2);}
+.sc.s-des .n{color:var(--muted);}
+
+.toolbar{display:flex;gap:10px;margin-bottom:18px;align-items:center;flex-wrap:wrap;}
+.btn-new{background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;border:none;padding:10px 22px;border-radius:6px;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:.2s;font-weight:500;}
+.btn-new:hover{opacity:.9;transform:translateY(-1px);}
+.srch{flex:1;max-width:280px;background:var(--dark2);border:1px solid rgba(198,169,108,.2);border-radius:6px;padding:9px 14px;color:var(--cream);font-family:'Jost',sans-serif;font-size:13px;outline:none;transition:.2s;}
+.srch:focus{border-color:var(--gold);}
+.srch::placeholder{color:var(--muted);}
+
+.tbl-wrap{background:var(--dark2);border:1px solid rgba(198,169,108,.15);border-radius:10px;overflow:hidden;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:900px;}
+thead tr{background:var(--dark3);border-bottom:1px solid rgba(198,169,108,.2);}
+th{padding:11px 14px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.05);transition:.15s;}
+tbody tr:hover{background:rgba(198,169,108,.04);}
+tbody tr:last-child{border-bottom:none;}
+td{padding:13px 14px;font-size:13px;color:var(--cream2);vertical-align:middle;}
+.td-cot{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);}
+.td-cli{font-weight:500;color:var(--cream);}
+.td-sm{font-size:11px;color:var(--muted);}
+.td-val{font-weight:500;color:var(--gold2);}
+
+.ebadge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid;cursor:pointer;transition:.2s;white-space:nowrap;}
+.ebadge:hover{filter:brightness(1.2);}
+.e-cal{background:rgba(78,160,90,.15);border-color:#4EA05A;color:#6EC97A;}
+.e-tib{background:rgba(196,154,26,.15);border-color:#C49A1A;color:#DDAA44;}
+.e-fri{background:rgba(58,95,139,.15);border-color:#3A5F8B;color:#7AADE8;}
+.e-con{background:rgba(198,169,108,.15);border-color:var(--gold);color:var(--gold);}
+.e-des{background:rgba(80,70,65,.3);border-color:#554F4A;color:var(--muted);}
+
+.dbadge{font-size:11px;padding:2px 7px;border-radius:10px;font-weight:500;}
+.d-ok{background:rgba(78,160,90,.15);color:#6EC97A;}
+.d-al{background:rgba(196,154,26,.2);color:#DDAA44;}
+.d-ur{background:rgba(139,58,58,.25);color:#E88;}
+
+.acts{display:flex;gap:5px;}
+.btn-a{background:none;border:1px solid rgba(198,169,108,.2);color:var(--muted);padding:4px 9px;border-radius:5px;font-size:11px;cursor:pointer;transition:.2s;font-family:'Jost',sans-serif;white-space:nowrap;}
+.btn-a:hover{border-color:var(--gold);color:var(--gold);}
+.btn-a.wp:hover{border-color:#4CAF50;color:#4CAF50;}
+.btn-a.del:hover{border-color:#E88;color:#E88;}
+
+.nota-c{display:inline-block;background:rgba(198,169,108,.08);border:1px solid rgba(198,169,108,.15);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.empty{text-align:center;padding:60px 32px;color:var(--muted);}
+.empty-icon{font-size:38px;margin-bottom:10px;}
+
+/* MODALS */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.ov.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dark2);border:1px solid rgba(198,169,108,.3);border-radius:12px;padding:28px;width:90%;max-width:500px;transform:translateY(16px);transition:transform .3s;max-height:90vh;overflow-y:auto;}
+.ov.open .modal{transform:translateY(0);}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold);margin-bottom:20px;letter-spacing:1px;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--dark3);border:1px solid rgba(198,169,108,.2);border-radius:6px;padding:9px 12px;color:var(--cream);font-family:'Jost',sans-serif;font-size:13px;outline:none;transition:.2s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);}
+.fg select option{background:var(--dark2);}
+.fg textarea{resize:vertical;min-height:70px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+.btn-c{background:none;border:1px solid rgba(198,169,108,.2);color:var(--muted);padding:9px 18px;border-radius:6px;cursor:pointer;font-family:'Jost',sans-serif;font-size:12px;transition:.2s;}
+.btn-c:hover{border-color:var(--muted);color:var(--cream);}
+.btn-s{background:linear-gradient(135deg,var(--rose),var(--rose2));border:none;color:#fff;padding:9px 22px;border-radius:6px;cursor:pointer;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:1px;font-weight:500;transition:.2s;}
+.btn-s:hover{opacity:.9;}
+
+/* WP Modal */
+.wp-msg{background:var(--dark3);border:1px solid rgba(76,175,80,.25);border-radius:8px;padding:14px;font-size:13px;line-height:1.8;color:var(--cream2);white-space:pre-wrap;margin:10px 0;}
+.btn-copy{background:rgba(76,175,80,.12);border:1px solid #4CAF50;color:#6EC97A;padding:9px 18px;border-radius:6px;cursor:pointer;font-family:'Jost',sans-serif;font-size:12px;transition:.2s;width:100%;margin-top:6px;}
+.btn-copy:hover{background:rgba(76,175,80,.22);}
+.tipo-sel{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;}
+.tipo-btn{padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid rgba(198,169,108,.2);background:none;color:var(--muted);font-family:'Jost',sans-serif;transition:.2s;}
+.tipo-btn.act,.tipo-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(198,169,108,.08);}
+
+@media(max-width:768px){
+  main{padding:16px;}
+  .stats{grid-template-columns:repeat(3,1fr);}
+  header{padding:14px 16px;}
+  .alerta-bar{padding:8px 16px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <h1>Allegra Weddings</h1>
+    <p>Seguimiento de Cotizaciones · CRM</p>
+  </div>
+  <div class="hdate" id="hdate"></div>
+</header>
+
+<div class="alerta-bar" id="alertaBar">
+  <span class="al-label">⚡ Hoy</span>
+  <span id="alertaContent" style="color:var(--muted);font-size:12px;">Cargando...</span>
+</div>
+
+<main>
+  <div class="stats">
+    <div class="sc s-all act" onclick="filtrar('all')"><div class="n" id="s-all">0</div><div class="l">Total</div></div>
+    <div class="sc s-cal" onclick="filtrar('caliente')"><div class="n" id="s-cal">0</div><div class="l">🔥 Caliente</div></div>
+    <div class="sc s-tib" onclick="filtrar('tibio')"><div class="n" id="s-tib">0</div><div class="l">🌡 Tibio</div></div>
+    <div class="sc s-fri" onclick="filtrar('frio')"><div class="n" id="s-fri">0</div><div class="l">❄️ Frío</div></div>
+    <div class="sc s-con" onclick="filtrar('contratado')"><div class="n" id="s-con">0</div><div class="l">✅ Contratado</div></div>
+    <div class="sc s-des" onclick="filtrar('descartado')"><div class="n" id="s-des">0</div><div class="l">❌ Descartado</div></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn-new" onclick="abrirModal()">+ Registrar Cotización</button>
+    <input class="srch" type="text" placeholder="Buscar cliente o N° cotización..." oninput="buscar(this.value)">
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>N° Cot.</th><th>Cliente</th><th>Fecha Evento</th><th>Valor</th>
+        <th>Enviada</th><th>Días</th><th>Estado</th><th>Próx. Seguimiento</th><th>Nota</th><th>Acciones</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">
+      <div class="empty-icon">💌</div>
+      <p>Sin cotizaciones registradas.<br>Agrega la primera con el botón de arriba.</p>
+    </div>
+  </div>
+</main>
+
+<!-- Modal Form -->
+<div class="ov" id="ovForm">
+  <div class="modal">
+    <h2 id="mTitulo">Registrar Cotización</h2>
+    <div class="frow">
+      <div class="fg"><label>N° Cotización</label><input id="f-cot" placeholder="COT-2026-001"></div>
+      <div class="fg"><label>Estado</label>
+        <select id="f-est">
+          <option value="tibio">🌡 Tibio — Recién enviada</option>
+          <option value="caliente">🔥 Caliente — Muy interesado</option>
+          <option value="frio">❄️ Frío — Sin respuesta</option>
+          <option value="contratado">✅ Contratado</option>
+          <option value="descartado">❌ Descartado</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Nombre del Cliente</label><input id="f-cli" placeholder="Nombre completo"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha del Evento</label><input type="date" id="f-fev"></div>
+      <div class="fg"><label>Valor Cotización ($)</label><input id="f-val" placeholder="180000000"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>WhatsApp</label><input id="f-wp" placeholder="+57 300 000 0000"></div>
+      <div class="fg"><label>Fecha de Envío</label><input type="date" id="f-fen"></div>
+    </div>
+    <div class="fg"><label>Próximo Seguimiento</label><input type="date" id="f-seg"></div>
+    <div class="fg"><label>Notas</label><textarea id="f-not" placeholder="Observaciones del cliente..."></textarea></div>
+    <div class="mfoot">
+      <button class="btn-c" onclick="cerrar('ovForm')">Cancelar</button>
+      <button class="btn-s" onclick="guardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal WP -->
+<div class="ov" id="ovWP">
+  <div class="modal">
+    <h2>📱 Mensaje WhatsApp</h2>
+    <div class="tipo-sel" id="tipoSel"></div>
+    <div class="wp-msg" id="wpMsg"></div>
+    <button class="btn-copy" onclick="copiar()">📋 Copiar — pegar en WhatsApp</button>
+    <div class="mfoot"><button class="btn-c" onclick="cerrar('ovWP')">Cerrar</button></div>
+  </div>
+</div>
+
+<script>
+const KEY = 'allegra_crm_v2';
+let D = [], filtro = 'all', editIdx = -1, wpCliente = null, tipoWP = 'seguimiento';
+
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+const save = () => localStorage.setItem(KEY, JSON.stringify(D));
+
+const hoy = () => new Date().toISOString().split('T')[0];
+const dias = f => f ? Math.floor((new Date() - new Date(f)) / 86400000) : 0;
+const fmtF = f => { if(!f) return '—'; const [y,m,d]=f.split('-'); return `${d}/${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][m-1]}/${y.slice(2)}`; };
+const fmtV = v => { const n=parseInt((v||'').toString().replace(/\D/g,'')); return n ? '$ '+n.toLocaleString('es-CO') : '—'; };
+const seg2 = () => { const d=new Date(); d.setDate(d.getDate()+2); return d.toISOString().split('T')[0]; };
+
+const eLbl = { caliente:'🔥 Caliente', tibio:'🌡 Tibio', frio:'❄️ Frío', contratado:'✅ Contratado', descartado:'❌ Descartado' };
+const eCls = { caliente:'e-cal', tibio:'e-tib', frio:'e-fri', contratado:'e-con', descartado:'e-des' };
+
+function actualizarFecha() {
+  const h=new Date();
+  const ds=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const ms=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('hdate').textContent = `${ds[h.getDay()]}, ${h.getDate()} de ${ms[h.getMonth()]} ${h.getFullYear()}`;
+}
+
+function actualizarAlertas() {
+  const h = hoy();
+  const chips = [];
+  D.forEach((c,i) => {
+    if (c.estado==='descartado'||c.estado==='contratado') return;
+    const d = dias(c.fechaEnvio);
+    const venc = c.seg && c.seg < h;
+    const hoyS = c.seg === h;
+    if (venc) chips.push(`<span class="al-chip urgente" onclick="editarC(${i})">🚨 ${c.cliente.split(' ')[0]} — Vencido</span>`);
+    else if (hoyS) chips.push(`<span class="al-chip hoy" onclick="editarC(${i})">⏰ ${c.cliente.split(' ')[0]} — Llamar hoy</span>`);
+    else if (d >= 2 && !c.seg) chips.push(`<span class="al-chip hoy" onclick="editarC(${i})">⏰ ${c.cliente.split(' ')[0]} — ${d}d sin resp.</span>`);
+  });
+  document.getElementById('alertaContent').innerHTML = chips.length
+    ? chips.join('')
+    : '<span style="color:var(--muted);font-size:12px;">✓ Sin seguimientos pendientes hoy</span>';
+}
+
+function actualizarStats() {
+  const c = {all:D.length,caliente:0,tibio:0,frio:0,contratado:0,descartado:0};
+  D.forEach(x => c[x.estado] !== undefined && c[x.estado]++);
+  document.getElementById('s-all').textContent = c.all;
+  document.getElementById('s-cal').textContent = c.caliente;
+  document.getElementById('s-tib').textContent = c.tibio;
+  document.getElementById('s-fri').textContent = c.frio;
+  document.getElementById('s-con').textContent = c.contratado;
+  document.getElementById('s-des').textContent = c.descartado;
+}
+
+function renderTabla(lista) {
+  const tb = document.getElementById('tbody');
+  const em = document.getElementById('empty');
+  if (!lista.length) { tb.innerHTML=''; em.style.display='block'; return; }
+  em.style.display = 'none';
+  tb.innerHTML = lista.map(([c,i]) => {
+    const d = dias(c.fechaEnvio);
+    const ocultar = c.estado==='contratado'||c.estado==='descartado';
+    const dCls = d>=4 ? 'd-ur' : d>=2 ? 'd-al' : 'd-ok';
+    const segHoy = c.seg === hoy();
+    const segVenc = c.seg && c.seg < hoy();
+    const segLabel = !c.seg ? '—' : `<span style="font-size:11px;color:${segVenc?'#E88':segHoy?'#DDA':'var(--muted)'}">${segVenc?'⚠️ ':segHoy?'⏰ ':''}${fmtF(c.seg)}</span>`;
+    return `<tr>
+      <td class="td-cot">${c.cot||'—'}</td>
+      <td class="td-cli">${c.cliente||'—'}</td>
+      <td class="td-sm">${fmtF(c.fechaEvento)}</td>
+      <td class="td-val">${fmtV(c.valor)}</td>
+      <td class="td-sm">${fmtF(c.fechaEnvio)}</td>
+      <td>${ocultar?'—':`<span class="dbadge ${dCls}">${d}d</span>`}</td>
+      <td><span class="ebadge ${eCls[c.estado]}" onclick="cambiarEstado(${i})" title="Clic para cambiar estado">${eLbl[c.estado]}</span></td>
+      <td>${segLabel}</td>
+      <td>${c.notas?`<span class="nota-c" title="${c.notas}">${c.notas}</span>`:'—'}</td>
+      <td><div class="acts">
+        <button class="btn-a wp" onclick="abrirWP(${i})">📱 WS</button>
+        <button class="btn-a" onclick="editarC(${i})">✏️</button>
+        <button class="btn-a del" onclick="eliminar(${i})">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function refrescar() {
+  actualizarStats();
+  actualizarAlertas();
+  const lista = filtro==='all' ? D.map((c,i)=>[c,i]) : D.map((c,i)=>[c,i]).filter(([c])=>c.estado===filtro);
+  renderTabla(lista);
+}
+
+function filtrar(f) {
+  filtro = f;
+  document.querySelectorAll('.sc').forEach(el=>el.classList.remove('act'));
+  const map = {all:'s-all',caliente:'s-cal',tibio:'s-tib',frio:'s-fri',contratado:'s-con',descartado:'s-des'};
+  document.getElementById(map[f]).closest('.sc').classList.add('act');
+  refrescar();
+}
+
+function buscar(q) {
+  const l = q.toLowerCase();
+  renderTabla(D.map((c,i)=>[c,i]).filter(([c])=>(c.cliente||'').toLowerCase().includes(l)||(c.cot||'').toLowerCase().includes(l)));
+}
+
+// MODAL FORM
+function abrirModal(idx) {
+  editIdx = idx!==undefined ? idx : -1;
+  document.getElementById('mTitulo').textContent = editIdx>=0 ? 'Editar Cotización' : 'Registrar Cotización Enviada';
+  const c = editIdx>=0 ? D[editIdx] : null;
+  document.getElementById('f-cot').value = c?.cot||'';
+  document.getElementById('f-cli').value = c?.cliente||'';
+  document.getElementById('f-est').value = c?.estado||'tibio';
+  document.getElementById('f-fev').value = c?.fechaEvento||'';
+  document.getElementById('f-val').value = c?.valor||'';
+  document.getElementById('f-wp').value  = c?.wp||'';
+  document.getElementById('f-fen').value = c?.fechaEnvio||hoy();
+  document.getElementById('f-seg').value = c?.seg||(editIdx<0?seg2():'');
+  document.getElementById('f-not').value = c?.notas||'';
+  document.getElementById('ovForm').classList.add('open');
+}
+
+function editarC(i) { abrirModal(i); }
+function cerrar(id) { document.getElementById(id).classList.remove('open'); }
+
+function guardar() {
+  const cli = document.getElementById('f-cli').value.trim();
+  if (!cli) { alert('Escribe el nombre del cliente.'); return; }
+  const obj = {
+    cot: document.getElementById('f-cot').value.trim(),
+    cliente: cli,
+    estado: document.getElementById('f-est').value,
+    fechaEvento: document.getElementById('f-fev').value,
+    valor: document.getElementById('f-val').value.trim(),
+    wp: document.getElementById('f-wp').value.trim(),
+    fechaEnvio: document.getElementById('f-fen').value||hoy(),
+    seg: document.getElementById('f-seg').value,
+    notas: document.getElementById('f-not').value.trim(),
+    creado: editIdx>=0 ? D[editIdx].creado : new Date().toISOString()
+  };
+  if (editIdx>=0) D[editIdx]=obj; else D.unshift(obj);
+  save(); cerrar('ovForm'); refrescar();
+}
+
+function eliminar(i) {
+  if (!confirm(`¿Eliminar a ${D[i].cliente}?`)) return;
+  D.splice(i,1); save(); refrescar();
+}
+
+function cambiarEstado(i) {
+  const est = ['tibio','caliente','frio','contratado','descartado'];
+  D[i].estado = est[(est.indexOf(D[i].estado)+1)%est.length];
+  save(); refrescar();
+}
+
+// WHATSAPP
+const msgs = {
+  envio: c => `Hola ${c.cliente.split(' ')[0]} 😊, te saluda Andrea Henao de *Allegra Weddings*.
+
+Te comparto la propuesta de cotización *${c.cot||''}* para tu boda. Fue un placer conocer tu visión y estamos muy emocionadas de poder crear algo espectacular para ti 🌸.
+
+📎 Te adjunto el PDF con todos los detalles de la propuesta.
+
+Quedo atenta a cualquier pregunta. ¡Será un honor acompañarte en este día tan especial! 💍`,
+
+  seguimiento: c => `Hola ${c.cliente.split(' ')[0]}! 🌸 Te escribe Andrea de *Allegra Weddings*.
+
+Quería hacer un seguimiento a la propuesta que te envié ${c.cot?'('+c.cot+')':''}. ¿Tuviste oportunidad de revisarla?
+
+Estoy disponible para resolver cualquier duda o hacer los ajustes que necesites. ✨`,
+
+  cambios: c => `Hola ${c.cliente.split(' ')[0]}! 💫 Soy Andrea de *Allegra Weddings*.
+
+Con gusto hacemos los ajustes que necesitas a tu cotización. ¿Tienes un momento para que conversemos y afinamos los detalles? 📞
+
+¡Queremos que todo sea perfecto para ti! 🎊`,
+
+  cierre: c => `Hola ${c.cliente.split(' ')[0]} 🌹, te escribe Andrea de *Allegra Weddings*.
+
+¡Qué alegría que podamos acompañarte en tu boda! 🎊 Para formalizar la reserva de la fecha necesitamos el anticipo del *30%*.
+
+📲 Escríbeme para compartirte los datos de pago.
+
+¡Estamos muy emocionadas de empezar a crear tu día perfecto! 💍✨`,
+
+  descartar: c => `Hola ${c.cliente.split(' ')[0]}, te escribe Andrea de *Allegra Weddings*.
+
+Entendemos que por el momento no podemos acompañarte en tu evento. Si en algún momento cambias de planes o necesitas una nueva propuesta, con gusto te atendemos 🌸.
+
+¡Te deseamos una boda maravillosa! 💐`
+};
+
+const tiposWPDef = [
+  {k:'envio',l:'📤 Envío inicial'},
+  {k:'seguimiento',l:'🔔 Seguimiento'},
+  {k:'cambios',l:'✏️ Ajustes'},
+  {k:'cierre',l:'✅ Cierre'},
+  {k:'descartar',l:'❌ Descartar'}
+];
+
+function abrirWP(i) {
+  wpCliente = D[i]; tipoWP = 'seguimiento'; renderWP();
+  document.getElementById('ovWP').classList.add('open');
+}
+
+function renderWP() {
+  document.getElementById('tipoSel').innerHTML = tiposWPDef.map(t=>
+    `<button class="tipo-btn ${t.k===tipoWP?'act':''}" onclick="selWP('${t.k}')">${t.l}</button>`
+  ).join('');
+  document.getElementById('wpMsg').textContent = msgs[tipoWP](wpCliente);
+}
+
+function selWP(k) { tipoWP=k; renderWP(); }
+
+function copiar() {
+  navigator.clipboard.writeText(document.getElementById('wpMsg').textContent).then(()=>{
+    const b=document.querySelector('.btn-copy');
+    b.textContent='✓ ¡Copiado! Abre WhatsApp y pega';
+    setTimeout(()=>b.textContent='📋 Copiar — pegar en WhatsApp',2500);
+  });
+}
+
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// INIT
+D = load();
+actualizarFecha();
+
+if (!D.length) {
+  const ayer = ()=>{ const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; };
+  const hace3 = ()=>{ const d=new Date(); d.setDate(d.getDate()-3); return d.toISOString().split('T')[0]; };
+  const hace7 = ()=>{ const d=new Date(); d.setDate(d.getDate()-7); return d.toISOString().split('T')[0]; };
+  D = [
+    {cot:'COT-2026-001',cliente:'Mauricio Medina',estado:'caliente',fechaEvento:'2026-06-26',valor:'180000000',wp:'+57 300 111 2233',fechaEnvio:ayer(),seg:hoy(),notas:'Muy interesado, quiere revisar catering',creado:new Date().toISOString()},
+    {cot:'COT-2026-002',cliente:'Andrea Henao',estado:'tibio',fechaEvento:'2026-11-21',valor:'220000000',wp:'+57 300 444 5566',fechaEnvio:ayer(),seg:seg2(),notas:'Enviada, esperando respuesta',creado:new Date().toISOString()},
+    {cot:'COT-2026-003',cliente:'Nikol Agudelo',estado:'frio',fechaEvento:'2026-12-06',valor:'150000000',wp:'+57 300 777 8899',fechaEnvio:hace7(),seg:'',notas:'7 días sin respuesta',creado:new Date().toISOString()},
+    {cot:'COT-2026-004',cliente:'Rosa & Yonny',estado:'contratado',fechaEvento:'2026-12-06',valor:'195000000',wp:'+57 300 999 0011',fechaEnvio:hace3(),seg:'',notas:'¡Firmaron! Anticipo recibido ✅',creado:new Date().toISOString()}
+  ];
+  save();
+}
+refrescar();
+</script>
+</body>
+</html>
