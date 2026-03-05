@@ -446,8 +446,25 @@ if (!D.length) {
     {cot:'COT-2026-004',cliente:'Rosa & Yonny',estado:'contratado',fechaEvento:'2026-12-06',valor:'195000000',wp:'+57 300 999 0011',fechaEnvio:hace3(),seg:'',notas:'¡Firmaron! Anticipo recibido ✅',creado:new Date().toISOString()}
   ];
   save();
+  D.forEach(enviarAGoogleSheets);
 }
 refrescar();
+  const API_URL = "https://script.google.com/macros/s/AKfycbzacT8wmgYx2oscvIZ2Hp_UIet05LrVyHhCymAvlu1BsZDo5VDfsQskOmTddI0Zh_tjmw/exec";
+
+function enviarAGoogleSheets(data){
+  fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      numero:data.cot,
+      cliente:data.cliente,
+      fecha:data.fechaEvento,
+      valor:data.valor,
+      estado:data.estado,
+      seguimiento:data.proximoSeguimiento || "",
+      nota:data.nota || ""
+    })
+  });
+}
 </script>
 </body>
 </html>
