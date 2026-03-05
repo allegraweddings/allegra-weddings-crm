@@ -451,24 +451,22 @@ if (!D.length) {
 refrescar();
   const API_URL = "https://script.google.com/macros/s/AKfycbyMv0_DduzFErlzZv3pqpWbMHhEytOvehX7ZQPHinnh4XbZPd-yYoHq06VJLYgahAubhA/exec";
 
-
   function enviarAGoogleSheets(data){
 
  fetch(API_URL,{
-   method:"POST",
-   headers:{
-     "Content-Type":"application/json"
-   },
-   body:JSON.stringify({
-     numero:data.cot,
-     cliente:data.cliente,
-     fecha:data.fechaEvento,
-     valor:data.valor,
-     estado:data.estado,
-     seguimiento:data.proximoSeguimiento || "",
-     nota:data.nota || ""
-   })
-
+  method:"POST",
+  headers:{
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify({
+   numero:data.cot,
+   cliente:data.cliente,
+   fecha:data.fechaEvento,
+   valor:data.valor,
+   estado:data.estado,
+   seguimiento:data.proximoSeguimiento || "",
+   nota:data.nota || ""
+  })
  });
 
 }
